@@ -211,7 +211,7 @@ func main() {
 
 ### Hands on folder `pipeline` of the `generator`, `pipeline` and `fan out` pattern:
 
-Without pipeline:
+Without Fan In / Fan Out pattern (folder `001`):
 
 ```bash
 davidalecrim@Davids-Macbook-Pro-M4-Pro 001 % go run main.go
@@ -237,3 +237,33 @@ davidalecrim@Davids-Macbook-Pro-M4-Pro 001 % go run main.go
 19 - 37801867
 Total Execution time: (in seconds): 4.221439
 ```
+
+With Fan In and Fan Out Pattern (folder `002`):
+
+```bash
+davidalecrim@Davids-Macbook-Pro-M4-Pro 002 % go run main.go
+Amount of CPUs:  12
+0 - 14005063
+1 - 16417229
+2 - 13178293
+3 - 36242369
+4 - 57813551
+5 - 97841369
+6 - 65167831
+7 - 44850517
+8 - 22551409
+9 - 66343579
+10 - 68644973
+11 - 48501823
+12 - 96359057
+13 - 15607373
+14 - 23021861
+15 - 94668961
+16 - 13219571
+17 - 41215879
+18 - 51082751
+19 - 20677051
+Total Execution time: (in seconds): 0.628412
+```
+
+A buffer didn't changed much the results.
