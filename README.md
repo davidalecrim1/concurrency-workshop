@@ -1,8 +1,8 @@
 # Concurrency Workshop
 
-This is a practical guide of how to apply the Canonical Go Concurrency Pattern (a.k.a. Worker Pool with Results) in Golang with an actual API from Via CEP in Brazil.
+This is a practical guide of how to apply some concorrency patterns in Golang.
 
-## Canonical Go Concurrency Pattern
+## Worker Pool Pattern:
 
 Sample code for reference:
 
@@ -45,7 +45,9 @@ for result := range results {
 }
 ```
 
-## Results:
+### Hands on folder `worker_pool` of this pattern:
+
+This used an external API (Via CEP from Brazil) to apply a worker pool.
 
 Using workers=1:
 
@@ -144,3 +146,94 @@ CEP: 07000370
 ```
 
 Beyond the 10_000, it overloaded my network and increase the amount of invalid CEPs cause by network connection.
+
+## Other Patterns
+
+- Pipeline
+- Fan Out && Fan In
+- Generator
+
+We will create an example using all of this pattern in the folder `pipeline`.
+
+The pipeline pattern is a concurrency pattern that connects stages via channels, where each stage transforms data and sends it to the next stage. It’s great for decoupling, parallelism, and stream processing.
+
+Sample code:
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+func gen(nums ...int) <-chan int {
+    out := make(chan int)
+    go func() {
+        for _, n := range nums {
+            out <- n
+        }
+        close(out)
+    }()
+    return out
+}
+
+func multiplyBy2(in <-chan int) <-chan int {
+    out := make(chan int)
+    go func() {
+        for n := range in {
+            out <- n * 2
+        }
+        close(out)
+    }()
+    return out
+}
+
+func add1(in <-chan int) <-chan int {
+    out := make(chan int)
+    go func() {
+        for n := range in {
+            out <- n + 1
+        }
+        close(out)
+    }()
+    return out
+}
+
+func main() {
+    in := gen(1, 2, 3)
+    out := add1(multiplyBy2(in))
+
+    for result := range out {
+        fmt.Println(result) // 3, 5, 7
+    }
+}
+```
+
+### Hands on folder `pipeline` of the `generator`, `pipeline` and `fan out` pattern:
+
+Without pipeline:
+
+```bash
+davidalecrim@Davids-Macbook-Pro-M4-Pro 001 % go run main.go
+0 - 61593341
+1 - 96418121
+2 - 60666797
+3 - 36491321
+4 - 28664239
+5 - 7691863
+6 - 6207367
+7 - 84081713
+8 - 40813369
+9 - 37995019
+10 - 14608591
+11 - 35037193
+12 - 53967547
+13 - 67103549
+14 - 38412467
+15 - 2698321
+16 - 71137097
+17 - 11231081
+18 - 93647527
+19 - 37801867
+Total Execution time: (in seconds): 4.221439
+```
